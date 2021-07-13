@@ -22,7 +22,8 @@ const userSchema = mongoose.Schema({
 	},
 	mobile : {
 		type : String,
-		trim : true
+		trim : true,
+		unique : true
 	},
 	whatsapp : {
 		type : String,
