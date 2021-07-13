@@ -103,7 +103,10 @@ router.get('/me', auth, async(req, res) => {
 router.get('/:id', async(req, res) => {
 	//If admin requests the user information of the same department
 	//if(req.user_token_details.type == 'A' && req.)
-	const user = await User.findById(req.params.id).select('-password').lean()
+	const id = req.params.id
+	const user = await User.findOne({
+		$or : [{_id : id}, {mobile : id}] 
+	}).select('-password').lean()
 	if(!user){
 		return res.status(404).send('No user found')
 	}
@@ -134,7 +137,7 @@ router.post('/', async(req, res) => {
 
 	user = new User(user_obj)
 
-	// await user.save()
+	await user.save()
 
 	return res.send(user)
 })
