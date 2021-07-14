@@ -63,6 +63,8 @@ router.get('/mobile/:mobile', async(req, res) => {
 	if(!user){
 		return res.status(404).send('No user found')
 	}
+
+	user.profile_picture_url = fileAddPathCustom(user.profile_picture, 'avatar')
 	return res.send(user)
 })
 
