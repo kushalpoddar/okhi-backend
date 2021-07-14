@@ -8,10 +8,15 @@ const userSchema = mongoose.Schema({
 		required : true,
 		trim : true,
 	},
+	profile_picture : {
+		type : String,
+		trim : true,
+	},
 	type : {
 		type : String, //A = Admin, U - User
 		required : true,
-		trim : true
+		trim : true,
+		enum : ['A', 'U']
 	},
 	email : {
 		type : String,

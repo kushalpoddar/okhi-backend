@@ -83,6 +83,13 @@ app.use('/api/user', user_route)
 app.use('/api/auth', auth_route)
 app.use('/api/bgtheme', bgtheme_route)
 
+// 1st call for unredirected requests 
+app.use(express.static(path.join(__dirname + '/build')))
+// Support history api 
+app.use(history());
+// 2nd call for redirected requests
+app.use(express.static(path.join(__dirname + '/build')))
+
 //Mongoose
 const MONGO_HOSTNAME = (config.get('type') == 'P') ? db_config.host_prod : db_config.host_dev
 const MONGO_PORT = db_config.port
@@ -108,9 +115,9 @@ mongoose.connect(mongourl, { useNewUrlParser: true , useUnifiedTopology: true })
 	console.log(`Error in connecting to database ${err}`)
 })
 
-app.get('/', (req, res) => {
-	res.send("HIII")
-})
+// app.get('/', (req, res) => {
+// 	res.send("HIII")
+// })
 
 //Setting up WebServer
 const port = 3498

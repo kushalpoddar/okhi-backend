@@ -24,16 +24,8 @@ const fileAddPathCustom = function(files, type){
 
 	let new_files = files.map(file_name => {
 		let new_file
-		if(type == 'report_card'){
-			new_file = `${file_config.path}${file_config.report_card}${file_name}`
-		}else if(type == 'attendance'){
-			new_file = `${file_config.path}${file_config.attendance}${file_name}`
-		}else if(type == 'notice'){
-			new_file = `${file_config.path}${file_config.notice}${file_name}`
-		}else if(type == 'profile'){
-			new_file = `${file_config.path}${file_config.profile}${file_name}`
-		}else if(type == 'classroom_wallpaper'){
-			new_file = `${file_config.path}${file_config.classroom_wallpaper}${file_name}`
+		if(type == 'avatar'){
+			new_file = `${file_config.path}${file_config.avatar}${file_name}`
 		}
 	
 		return new_file

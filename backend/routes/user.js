@@ -36,74 +36,20 @@ const upload = multer({
 
 router.get('/', auth, async(req, res) => {
 	const users = await User.find().select('-password').lean()
-
 	return res.send(users)
 })
 
 //Get the details of myself
 router.get('/me', auth, async(req, res) => {
+
 	const user = await User.findById(req.user_token_details._id).select('-password').lean()
 	if(!user){
 		return res.status(404).send('No user found')
 	}
 
-	user.profile_picture = fileAddPathCustom(user.profile_picture, 'profile')
+	user.profile_picture_url = fileAddPathCustom(user.profile_picture, 'avatar')
 	return res.send(user)
 })
-
-// //Updating my profile
-// router.put('/me', [auth, upload.single('profile_picture')], async(req, res) => {
-// 	const user = await User.findById(req.user_token_details._id).select('-password')
-// 	if(!user){
-// 		return res.status(404).send('No user found')
-// 	}
-
-// 	//New filename
-// 	const mypic = req.file
-// 	if((mypic) || (req.body.remove_profile_picture)){
-
-// 		//Removing the old image if any
-// 		if(user.profile_picture){
-// 			try{
-// 				fs.unlinkSync(`${destination}${user.profile_picture}`)
-// 			}catch(ex){
-				
-// 			}
-// 			user.set({
-// 				profile_picture : null
-// 			})
-// 		}
-			
-// 		if(mypic){
-// 			const new_filename = `${path.parse(mypic.filename).name}.webp`
-// 			//COnverting the image into webp and resizing it to maximum 300 pixels in width or height
-// 			await sharp(mypic.path).resize(300).webp({
-// 				reductionEffort : 5
-// 			}).toFile(path.resolve(mypic.destination, new_filename))
-
-// 			//Updating the profile picture now
-// 			user.set({
-// 				profile_picture : new_filename
-// 			})
-
-// 			//Removing the png image now
-// 			fs.unlinkSync(mypic.path)
-// 		}
-// 	}
-
-// 	const introduction = req.body.introduction
-// 	if(introduction){
-// 		user.set({
-// 			introduction
-// 		})
-// 	}
-
-// 	await user.save()
-
-// 	user.profile_picture = fileAddPathCustom(user.profile_picture, 'profile')
-
-// 	return res.send(user)
-// })
 
 //Get the details of a user by mobile
 router.get('/mobile/:mobile', async(req, res) => {
@@ -133,6 +79,27 @@ router.get('/:id', async(req, res) => {
 		return res.status(404).send('No user found')
 	}
 	return res.send(user)
+})
+
+//Uploading a file
+router.post('/upload', [auth, upload.single('file')], async(req, res) => {
+	// Updating the user model for new file
+	let user = await User.findOne({
+		_id : req.user_token_details._id
+	})
+
+	const filename = req.file.filename
+	user.set({
+		profile_picture : filename
+	})
+
+	await user.save()
+
+	const file_url = fileAddPathCustom(user.profile_picture, 'avatar')
+	return res.send({
+		url : file_url,
+		filename
+	})
 })
 
 //Create a new user --> Route authentication is remaining (should be only for superadmin)
