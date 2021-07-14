@@ -7,6 +7,7 @@ const path = require('path')
 const config = require('config')
 const db_config = config.get('db')
 const helmet = require('helmet')
+const history = require('connect-history-api-fallback');
 
 app.use(express.json())
 
