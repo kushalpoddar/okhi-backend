@@ -34,6 +34,12 @@ const upload = multer({
 	This part handles the routes for a user
 **/
 
+router.get('/', auth, async(req, res) => {
+	const users = await User.find().select('-password').lean()
+
+	return res.send(users)
+})
+
 //Get the details of myself
 router.get('/me', auth, async(req, res) => {
 	const user = await User.findById(req.user_token_details._id).select('-password').lean()

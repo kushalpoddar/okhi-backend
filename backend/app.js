@@ -9,16 +9,13 @@ const helmet = require('helmet')
 
 app.use(express.json())
 
-// const ALLOWED_DOMAINS = [
-// 	'https://teachomatrix.com', 
-// 	'https://www.teachomatrix.com', 
-// 	'https://teacher.teachomatrix.com', 
-// 	'https://student.teachomatrix.com', 
-// 	'https://teststudent.teachomatrix.com', 
-// 	'https://testteacher.teachomatrix.com', 
-// 	'http://localhost:8080',
-// 	'http://localhost:8081'
-// ]
+const ALLOWED_DOMAINS = [
+	'https://okhi.in', 
+	'https://www.okhi.in', 
+	'http://localhost:8080',
+	'http://localhost:8081'
+	'http://localhost:3000'
+]
 
 // const CSP_ALLOWED_DOMAINS = [
 // 	'https://*.teachomatrix.com',  
@@ -51,7 +48,16 @@ app.use(helmet.xssFilter());
 // );
 
 //Using the cors headers to allow only from the request
-app.use(cors())
+app.use(cors({
+	credentials : true,
+	origin : function(origin, callback){
+		if(ALLOWED_DOMAINS.includes(origin)){
+			callback(null, true)
+		}else{
+			callback(null, false)
+		}
+	}
+}))
 app.use('/uploads', express.static('uploads'))
 app.use('/static', express.static('static'))
 
