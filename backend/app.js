@@ -13,7 +13,7 @@ const ALLOWED_DOMAINS = [
 	'https://okhi.in', 
 	'https://www.okhi.in', 
 	'http://localhost:8080',
-	'http://localhost:8081'
+	'http://localhost:8081',
 	'http://localhost:3000'
 ]
 
