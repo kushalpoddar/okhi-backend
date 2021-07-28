@@ -140,7 +140,6 @@ const userSchema = mongoose.Schema({
 		trim : true,
 	},
 
-
 	created_at : {
 		type : Date,
 		default : Date.now
@@ -148,6 +147,13 @@ const userSchema = mongoose.Schema({
 	status : {
 		type : Boolean,
 		default : true
+	},
+	is_approved : {
+		type : Boolean,
+		default : false
+	},
+	subscription_amount : {
+		type : Number,
 	},
 })
 

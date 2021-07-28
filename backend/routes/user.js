@@ -35,7 +35,10 @@ const upload = multer({
 **/
 
 router.get('/', auth, async(req, res) => {
-	const users = await User.find().select('-password').lean()
+	const users = await User.find({
+		type : 'U'
+	}).select('-password').lean()
+
 	return res.send(users)
 })
 
@@ -47,7 +50,9 @@ router.get('/me', auth, async(req, res) => {
 		return res.status(404).send('No user found')
 	}
 
+
 	user.profile_picture_url = fileAddPathCustom(user.profile_picture, 'avatar')
+
 	return res.send(user)
 })
 
@@ -147,6 +152,46 @@ router.put('/me', auth, async(req, res) => {
 	if(!user) return res.status(400).send('Invalid user')
 
 	user.set(value)
+
+	await user.save()
+
+	return res.send(user)
+})
+
+router.put('/:id', [auth, admin], async(req, res) => {
+	// const {error, value} = validateUser(req.body)
+	// if(error) return res.status(400).send(error.details[0].message)
+		
+	const user_id = req.params.id
+	const subscription_amount = req.body.subscription_amount
+	
+	let user = await User.findById(user_id)
+
+	if(!user) return res.status(400).send('Invalid user')
+
+	user.set({
+		subscription_amount
+	})
+
+	await user.save()
+
+	return res.send(user)
+})
+
+router.put('/approve', [auth, admin], async(req, res) => {
+	// const {error, value} = validateUser(req.body)
+	// if(error) return res.status(400).send(error.details[0].message)
+		
+	const user_id = req.body.user_id
+	let user = await User.findById(user_id)
+
+	if(!user) return res.status(400).send('Invalid user')
+
+	let new_approve_status = !user.is_approved
+
+	user.set({
+		is_approved : new_approve_status
+	})
 
 	await user.save()
 
