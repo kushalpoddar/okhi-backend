@@ -34,10 +34,27 @@ const upload = multer({
 	This part handles the routes for a user
 **/
 
-router.get('/', auth, async(req, res) => {
-	const users = await User.find({
+router.get('/', [auth, admin], async(req, res) => {
+	let search_obj = {
 		type : 'U'
-	}).select('-password').lean()
+	}
+
+	for(let key in req.query){
+		let val = req.query[key]
+		let regex = new RegExp(`${val}`, 'i')
+		if(key == 'mobile'){
+			search_obj['$or'] = [{
+				mobile : regex
+			}, {
+				whatsapp : regex
+			}]
+		}else if(key == 'marked'){	
+			search_obj[key] = val
+		}else{	
+			search_obj[key] = regex
+		}
+	}
+	const users = await User.find(search_obj).select('-password').lean()
 
 	return res.send(users)
 })
@@ -49,7 +66,6 @@ router.get('/me', auth, async(req, res) => {
 	if(!user){
 		return res.status(404).send('No user found')
 	}
-
 
 	user.profile_picture_url = fileAddPathCustom(user.profile_picture, 'avatar')
 
@@ -184,13 +200,15 @@ router.put('/:id', [auth, admin], async(req, res) => {
 		
 	const user_id = req.params.id
 	const subscription_amount = req.body.subscription_amount
+	const marked = req.body.marked
 	
 	let user = await User.findById(user_id)
 
 	if(!user) return res.status(400).send('Invalid user')
 
 	user.set({
-		subscription_amount
+		subscription_amount,
+		marked
 	})
 
 	await user.save()

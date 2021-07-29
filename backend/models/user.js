@@ -155,6 +155,9 @@ const userSchema = mongoose.Schema({
 	subscription_amount : {
 		type : Number,
 	},
+	marked : {
+		type : Boolean
+	}
 })
 
 userSchema.methods.generateAuthToken = function(){
