@@ -111,10 +111,12 @@ router.post('/upload', [auth, upload.single('file')], async(req, res) => {
 		_id : req.user_token_details._id
 	})
 
-	const filename = req.file.filename
-	user.set({
-		profile_picture : filename
-	})
+	if(req.file && req.file.filename){
+		const filename = req.file.filename
+		user.set({
+			profile_picture : filename
+		})
+	}
 
 	await user.save()
 
@@ -131,8 +133,14 @@ router.post('/', async(req, res) => {
 	const {error, value} = validateUser(req.body)
 	if(error) return res.status(400).send(error.details[0].message)
 		
+	// Checking duplicacy for mobile and email
 	let user = await User.findOne({
-		email : req.body.email
+		$or : [{
+			email : req.body.email
+		},{
+			mobile : req.body.mobile
+		}]
+		
 	}).lean()
 
 	if(user) return res.status(400).send('User already registered')

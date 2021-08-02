@@ -22,7 +22,7 @@ const fileAddPathCustom = function(files, type){
 		files = [files]
 	}
 
-	let new_files = files.map(file_name => {
+	let new_files = files.filter(file_name => file_name && file_name.length).map(file_name => {
 		let new_file
 		if(type == 'avatar'){
 			new_file = `${file_config.path}${file_config.avatar}${file_name}`

@@ -19,6 +19,7 @@ router.post('/', async(req, res) => {
 	// Only active users
 	let user = await User.findOne({
 		email,
+		is_approved : true,
 		status : true
 	})
 
